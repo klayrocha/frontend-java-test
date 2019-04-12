@@ -1,0 +1,1 @@
+export const  JUMIA_API: string = 'http://localhost:8080';
