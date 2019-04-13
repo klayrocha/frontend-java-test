@@ -86,6 +86,7 @@ export class CustomerComponent implements OnInit {
 
   showChart(){
     this.showTable = false;
+    this.customerFilter = new Customer('','','',new Country('', ''),'',);
     this.dataSource = {
       "chart": {
         "caption": "Countries with the amount phones",
