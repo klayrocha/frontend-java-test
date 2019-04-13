@@ -19,8 +19,12 @@ export class CustomerService {
   }
 
   findByParams(page:number,count:number,c:Customer){
-    c.countryCode = c.countryCode == '' ? "uninformed" : c.countryCode;
+    c.country.code = c.country.code == '' ? "uninformed" : c.country.code;
     c.state = c.state == '' ? "uninformed" : c.state;
-    return this.http.get(`${JUMIA_API}/api/phone/${page}/${count}/${c.countryCode}/${c.state}`);
+    return this.http.get(`${JUMIA_API}/api/phone/${page}/${count}/${c.country.code}/${c.state}`);
+  }
+
+  findChart(){
+    return this.http.get(`${JUMIA_API}/api/phone/chart`);
   }
 }

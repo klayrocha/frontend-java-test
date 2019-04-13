@@ -1,3 +1,4 @@
+import { Country } from './../../model/country';
 import { Customer } from './../../model/customer';
 import { CustomerService } from './../../services/customer.service';
 import { Component, OnInit } from '@angular/core';
@@ -15,15 +16,28 @@ export class CustomerComponent implements OnInit {
   pages:Array<number>;
   listCountries=[];
   listCustomer=[];
-  customerFilter = new Customer('','','','','','',);
+  customerFilter = new Customer('','','',new Country('', ''),'');
+  dataSource: Object;
+  chartConfig: Object;
+  charts=[];
+  showTable:boolean = true;
 
   constructor(
     private customerService: CustomerService
-  ) { }
+  ) { 
+    this.chartConfig = {
+      width: '700',
+      height: '400',
+      type: 'column2d',
+      dataFormat: 'json',
+    };
+  }
 
   ngOnInit() {
+    this.showTable = true;
     this.findAll(this.page,this.count);
     this.findAllCountries();
+    this.findChart();
   }
 
   findAll(page:number,count:number) {
@@ -36,6 +50,7 @@ export class CustomerComponent implements OnInit {
   }
 
   filterFromPage(): void {
+    this.showTable = true;
     this.page = 0;
     this.count = 5;
     this.filter();
@@ -44,7 +59,7 @@ export class CustomerComponent implements OnInit {
   filter(): void {
     this.customerService.findByParams(this.page,this.count,this.customerFilter)
     .subscribe((responseApi:ResponseApi) => {
-      this.customerFilter.countryCode = this.customerFilter.countryCode == 'uninformed' ? "" : this.customerFilter.countryCode;
+      this.customerFilter.country.code = this.customerFilter.country.code == 'uninformed' ? "" : this.customerFilter.country.code;
       this.customerFilter.state = this.customerFilter.state == 'uninformed' ? "" : this.customerFilter.state;
       this.listCustomer = responseApi['data']['content'];
       this.pages = new Array(responseApi['data']['totalPages']);
@@ -61,10 +76,34 @@ export class CustomerComponent implements OnInit {
     });
   }
 
+  findChart() {
+    this.customerService.findChart().subscribe((responseApi:ResponseApi) =>{
+        this.charts = responseApi['data'];
+    }, err => {
+      console.log('Erro findChart -->',err);
+    });
+  }
+
+  showChart(){
+    this.showTable = false;
+    this.dataSource = {
+      "chart": {
+        "caption": "Countries with the amount phones",
+        "subCaption": "Phones records in database",
+        "xAxisName": "Country",
+        "yAxisName": "Phones (Amount)",
+        "numberSuffix": "",
+        "theme": "fusion",
+      },
+      "data": this.charts
+    };
+  }
+
   cleanFilter(): void {
+    this.showTable = true;
     this.page = 0;
     this.count = 5;
-    this.customerFilter = new Customer('','','','','','',);
+    this.customerFilter = new Customer('','','',new Country('', ''),'',);
     this.findAll(this.page,this.count);
   }
 
@@ -72,7 +111,7 @@ export class CustomerComponent implements OnInit {
     event.preventDefault();
     if(this.page+1 < this.pages.length){
       this.page =  this.page +1;
-      if(this.customerFilter.countryCode != '' || this.customerFilter.state != ''){
+      if(this.customerFilter.country.code != '' || this.customerFilter.state != ''){
           this.filter();
       } else {
         this.findAll(this.page,this.count);
@@ -84,7 +123,7 @@ export class CustomerComponent implements OnInit {
     event.preventDefault();
     if(this.page > 0){
       this.page =  this.page - 1;
-      if(this.customerFilter.countryCode != '' || this.customerFilter.state != ''){
+      if(this.customerFilter.country.code != '' || this.customerFilter.state != ''){
           this.filter();
       } else {
         this.findAll(this.page,this.count);
@@ -95,7 +134,7 @@ export class CustomerComponent implements OnInit {
   setPage(i,event:any){
     event.preventDefault();
     this.page = i;
-    if(this.customerFilter.countryCode != '' || this.customerFilter.state != ''){
+    if(this.customerFilter.country.code != '' || this.customerFilter.state != ''){
       this.filter();
     } else {
       this.findAll(this.page,this.count);

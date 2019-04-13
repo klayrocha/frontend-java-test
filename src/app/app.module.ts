@@ -6,6 +6,11 @@ import {FormsModule} from '@angular/forms';
 import { AppComponent } from './app.component';
 import { CustomerComponent } from './components/customer/customer.component';
 
+import { FusionChartsModule } from 'angular-fusioncharts';
+import * as FusionCharts from 'fusioncharts';
+import * as Charts from 'fusioncharts/fusioncharts.charts';
+FusionChartsModule.fcRoot(FusionCharts, Charts)
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -14,7 +19,8 @@ import { CustomerComponent } from './components/customer/customer.component';
   imports: [
     BrowserModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    FusionChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

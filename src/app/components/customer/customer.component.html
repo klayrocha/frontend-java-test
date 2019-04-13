@@ -8,7 +8,7 @@
 <div class="container" style="background-color: white">
     <div class="form-group">
         <label for="exampleInputEmail1">Country</label>
-        <select class="form-control" [(ngModel)]="customerFilter.countryCode" 
+        <select class="form-control" [(ngModel)]="customerFilter.country.code" 
             name="countryCode"
             id="inputCountry">
             <option *ngFor="let country of listCountries" [value]="country.code">
@@ -32,9 +32,12 @@
     <div class="btn-group mr-2" role="group">
         <button class="btn btn-primary" (click)="filterFromPage()">Filter</button>
     </div>
+    <div class="btn-group mr-2" role="group">
+            <button class="btn btn-primary" (click)="showChart()">Show Chart</button>
+    </div>
     <hr />
     <div id="list" class="row">
-        <div class="table-responsive col-md-12">
+        <div class="table-responsive col-md-12" *ngIf="showTable">
             <table class="table table-striped" cellspacing="0" cellpadding="0">
                 <thead>
                     <tr>
@@ -46,8 +49,8 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let customer of listCustomer">
-                        <td>{{customer.countryCode}}</td>
-                        <td>{{customer.countryName}}</td>
+                        <td>{{customer.country.code}}</td>
+                        <td>{{customer.country.name}}</td>
                         <td>{{customer.name}}</td>
                         <td>{{customer.phone}}</td>
                         <td>{{customer.state}}</td>
@@ -56,9 +59,13 @@
             </table>
     
         </div>
+        <fusioncharts *ngIf="!showTable"
+            [chartConfig]=chartConfig
+            [dataSource]=dataSource >
+        </fusioncharts>
     </div>
 
-    <div id="bottom" class="row">
+    <div id="bottom" class="row" *ngIf="showTable">
         <nav aria-label="Page navigation example">
             <ul class="pagination">
                 <li class="page-item">
